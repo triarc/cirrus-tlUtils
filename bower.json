@@ -1,9 +1,6 @@
 {
   "name": "cirrus-tlUtils",
-  "version": "0.1.1",
-  "authors": [
-    "Marco Bachmann <mb@triarc-labs.com>"
-  ],
+  "version": "0.1.2",
   "main": "tlUtils.js",
   "moduleType": [
     "globals"
@@ -21,6 +18,6 @@
   },
   "endpoint": "https://github.com/triarc/cirrus-tlUtils.git",
   "dependencies": {
-    "cirrus-utils": "~0.2.0"
+    "cirrus-utils": "^0.4.1"
   }
 }
