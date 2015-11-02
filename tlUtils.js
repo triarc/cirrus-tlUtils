@@ -84,6 +84,41 @@ var Triarc;
             var decimalPlaces = angular.isNumber(places) ? places : 2;
             return parseFloat((input * 100 / 100)).toFixed(decimalPlaces);
         }; });
+        mod.service("tlIntelligentDebouncer", [
+            "$timeout", "tlIntelligentDebouncer.config", function ($timeout, config) {
+                return {
+                    getDebouncer: function (promiseFactory, initial) {
+                        if (initial === void 0) { initial = true; }
+                        var promise;
+                        var debounceNeeded = false;
+                        var check = function () {
+                            if (debounceNeeded) {
+                                promise = promise
+                                    .then(function () { return promiseFactory(); })
+                                    .then(function () { return $timeout(function () { return check(); }, config.debounceInterval); });
+                            }
+                            promise = undefined;
+                            debounceNeeded = false;
+                        };
+                        var debounce = function () {
+                            debounceNeeded = true;
+                            if (Triarc.hasNoValue(promise)) {
+                                promise = $timeout(function () { return check(); }, config.initialDebounce);
+                            }
+                        };
+                        if (initial)
+                            debounce();
+                        return {
+                            debounce: debounce
+                        };
+                    }
+                };
+            }
+        ]);
+        mod.constant("tlIntelligentDebouncer.config", function () { return ({
+            initialDebounce: 1000,
+            debounceInterval: 15000
+        }); });
     })(Utils = Triarc.Utils || (Triarc.Utils = {}));
 })(Triarc || (Triarc = {}));
 
