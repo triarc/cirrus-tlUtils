@@ -1,6 +1,6 @@
 {
   "name": "cirrus-tlUtils",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "main": "tlUtils.js",
   "moduleType": [
     "globals"
