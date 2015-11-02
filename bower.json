@@ -1,6 +1,9 @@
 {
   "name": "cirrus-tlUtils",
-  "version": "0.2.0",
+  "version": "0.2.1",
+  "authors": [
+    "Krzysztof Burlinski <kb@triarc-labs.com>"
+  ],
   "main": "tlUtils.js",
   "moduleType": [
     "globals"
