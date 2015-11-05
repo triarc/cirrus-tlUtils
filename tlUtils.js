@@ -115,10 +115,10 @@ var Triarc;
                 };
             }
         ]);
-        mod.constant("tlIntelligentDebouncer.config", function () { return ({
+        mod.constant("tlIntelligentDebouncer.config", {
             initialDebounce: 1000,
             debounceInterval: 15000
-        }); });
+        });
     })(Utils = Triarc.Utils || (Triarc.Utils = {}));
 })(Triarc || (Triarc = {}));
 
