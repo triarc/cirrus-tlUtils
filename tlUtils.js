@@ -16,7 +16,12 @@ var Triarc;
         });
         mod.directive('tlWhenScrolled', function () { return function (scope, elm, attr) {
             var raw = elm[0];
-            var scrollLimitFactor = Triarc.hasValue(attr.tlScrollLimit) ? attr.tlScrollLimit : 10;
+            var scrollLimitFactor = 10;
+            if (Triarc.hasValue(attr.tlScrollLimit)) {
+                var parsed = parseInt(attr.tlScrollLimit);
+                if (!isNaN(parsed))
+                    scrollLimitFactor = parsed;
+            }
             var maybePromise = null;
             elm.bind('scroll', function () {
                 if ((raw.scrollTop + raw.offsetHeight + scrollLimitFactor) >= raw.scrollHeight) {
