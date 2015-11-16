@@ -95,22 +95,24 @@ var Triarc;
                     getDebouncer: function (promiseFactory, initialLoad, initialMs, debounceMs) {
                         if (initialLoad === void 0) { initialLoad = true; }
                         initialMs = Triarc.hasValue(initialMs) ? initialMs : config.initialDebounce;
-                        debounceMs = Triarc.hasValue(initialMs) ? initialMs : config.debounceInterval;
+                        debounceMs = Triarc.hasValue(debounceMs) ? debounceMs : config.debounceInterval;
                         var promise;
                         var debounceNeeded = false;
                         var check = function () {
                             if (debounceNeeded) {
                                 promise = promise
                                     .then(function () { return promiseFactory(); })
-                                    .then(function () { return $timeout(function () { return check(); }, initialMs); });
+                                    .then(function () { return $timeout(function () { return check(); }, debounceMs); });
                             }
-                            promise = undefined;
+                            else {
+                                promise = undefined;
+                            }
                             debounceNeeded = false;
                         };
                         var debounce = function () {
                             debounceNeeded = true;
                             if (Triarc.hasNoValue(promise)) {
-                                promise = $timeout(function () { return check(); }, debounceMs);
+                                promise = $timeout(function () { return check(); }, initialMs);
                             }
                         };
                         if (initialLoad)
