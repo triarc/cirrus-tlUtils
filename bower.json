@@ -4,7 +4,9 @@
   "authors": [
     "Krzysztof Burlinski <kb@triarc-labs.com>"
   ],
-  "main": "tlUtils.js",
+  "main": [
+    "tlUtils.js"
+  ],
   "moduleType": [
     "globals"
   ],
