@@ -17,13 +17,14 @@ var Triarc;
         mod.directive('tlWhenScrolled', function () { return function (scope, elm, attr) {
             var raw = elm[0];
             var scrollLimitFactor = 10;
+            var isRegistered = false;
             if (Triarc.hasValue(attr.tlScrollLimit)) {
                 var parsed = parseInt(attr.tlScrollLimit);
                 if (!isNaN(parsed))
                     scrollLimitFactor = parsed;
             }
-            var maybePromise = null;
-            elm.bind('scroll', function () {
+            var handleScroll = function () {
+                var maybePromise = null;
                 if ((raw.scrollTop + raw.offsetHeight + scrollLimitFactor) >= raw.scrollHeight) {
                     if (maybePromise == null) {
                         // if the scroll is bound to a promise then wait for the promise before trying to 
@@ -39,7 +40,28 @@ var Triarc;
                         }
                     }
                 }
-            });
+            };
+            var unregister = function () {
+                elm.unbind('scroll', handleScroll);
+                isRegistered = false;
+            };
+            var register = function () {
+                if (!isRegistered) {
+                    elm.bind('scroll', handleScroll);
+                    isRegistered = true;
+                }
+            };
+            if (angular.isString(attr.tlScrollEnabled)) {
+                scope.$watch(attr.tlScrollEnabled, function (newValue) {
+                    if (newValue === false) {
+                        unregister();
+                    }
+                    else {
+                        register();
+                    }
+                });
+            }
+            register();
         }; });
         mod.directive('tlWhenScrolledTop', function () { return function (scope, elm, attr) {
             var raw = elm[0];

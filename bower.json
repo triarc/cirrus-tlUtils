@@ -23,6 +23,6 @@
   },
   "endpoint": "https://github.com/triarc/cirrus-tlUtils.git",
   "dependencies": {
-    "cirrus-utils": "^0.4.1"
+    "cirrus-utils": "^0.5.0"
   }
 }
