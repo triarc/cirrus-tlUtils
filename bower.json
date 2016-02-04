@@ -1,6 +1,6 @@
 {
   "name": "cirrus-tlUtils",
-  "version": "0.2.5",
+  "version": "0.3.0",
   "authors": [
     "Krzysztof Burlinski <kb@triarc-labs.com>"
   ],
@@ -23,6 +23,6 @@
   },
   "endpoint": "https://github.com/triarc/cirrus-tlUtils.git",
   "dependencies": {
-    "cirrus-utils": "^0.5.0"
+    "cirrus-utils": "^0.4.1"
   }
 }
