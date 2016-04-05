@@ -33,7 +33,7 @@ var Triarc;
                         maybePromise = scope.$apply(attr.tlWhenScrolled);
                         if (maybePromise != null) {
                             // console.log("2. promise is undefined");
-                            maybePromise.then(function () {
+                            maybePromise.finally(function () {
                                 maybePromise = null;
                                 // console.log("3. promise has returned");
                             });
