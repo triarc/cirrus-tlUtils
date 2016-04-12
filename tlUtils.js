@@ -105,6 +105,58 @@ var Triarc;
                 }
             };
         });
+        mod.directive('tlFullHeight', ['$window', function ($window) {
+                return {
+                    restrict: 'A',
+                    link: function (scope, element, attrs) {
+                        element.css('overflow-y', 'auto');
+                        var update = function () {
+                            var margins = scope.$eval(attrs.tlFullHeight);
+                            var margin = 0;
+                            if (angular.isNumber(margins)) {
+                                margin = margins;
+                            }
+                            $(element).css('height', $window.innerHeight - element.offset().top - margin);
+                        };
+                        scope.$watch(function () { return element.offset().top; }, function (val) {
+                            update();
+                        });
+                        scope.$watch(attrs.tlFullHeight, function () {
+                            update();
+                        });
+                        angular.element($window).bind('resize', function () {
+                            update();
+                        });
+                    }
+                };
+            }]);
+        mod.directive('tlHasScrollContent', function () {
+            return {
+                restrict: 'A',
+                scope: {
+                    tlHasScrollContent: '='
+                },
+                link: function (scope, element, attrs) {
+                    scope.checkHeight = function () {
+                        var child = element.first().children("div").first();
+                        if (child) {
+                            if (child.height() > element.first().height()) {
+                                scope.tlHasScrollContent = true;
+                            }
+                            else {
+                                scope.tlHasScrollContent = false;
+                            }
+                        }
+                    };
+                    element.bind('DOMNodeInserted', function () {
+                        scope.checkHeight();
+                    });
+                    element.bind('DOMNodeRemoved', function () {
+                        scope.checkHeight();
+                    });
+                }
+            };
+        });
         mod.filter('tlDecimalPlaces', function ($filter) { return function (input, places) {
             if (isNaN(input))
                 return input;
