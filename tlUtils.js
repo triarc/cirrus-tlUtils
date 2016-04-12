@@ -17,6 +17,7 @@ var Triarc;
         mod.directive('tlWhenScrolled', function () { return function (scope, elm, attr) {
             var raw = elm[0];
             var scrollLimitFactor = 10;
+            var maybePromise = null;
             var isRegistered = false;
             if (Triarc.hasValue(attr.tlScrollLimit)) {
                 var parsed = parseInt(attr.tlScrollLimit);
@@ -24,7 +25,6 @@ var Triarc;
                     scrollLimitFactor = parsed;
             }
             var handleScroll = function () {
-                var maybePromise = null;
                 if ((raw.scrollTop + raw.offsetHeight + scrollLimitFactor) >= raw.scrollHeight) {
                     if (maybePromise == null) {
                         // if the scroll is bound to a promise then wait for the promise before trying to 
