@@ -1,8 +1,9 @@
 {
   "name": "cirrus-tlUtils",
-  "version": "0.3.3",
+  "version": "0.3.4",
   "authors": [
-    "Krzysztof Burlinski <kb@triarc-labs.com>"
+    "Krzysztof Burlinski <kb@triarc-labs.com>",
+    "Pascal Bertschi <pb@triarc-labs.com>"
   ],
   "main": [
     "tlUtils.js"
