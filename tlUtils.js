@@ -376,3 +376,11 @@ var Triarc;
     })(Utils = Triarc.Utils || (Triarc.Utils = {}));
 })(Triarc || (Triarc = {}));
 
+angular.module('tlUtils').run(['$templateCache', function($templateCache) {
+  'use strict';
+
+  $templateCache.put('tlUtils/tlPillButton.html',
+    "<div class=\"btn-group pill-btn\" ng-style=\"{'width': pileFullWidth() ? '100%' : null}\"><button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.textClass : ctrl.labelClass\" ng-style=\"labelPosition() === 'right' ? ctrl.textStyle : null\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.leftClicked($event)\"><div ng-if=\"labelPosition() !== 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div><div ng-if=\"labelPosition() === 'right'\">{{text()}}</div></button> <button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.labelClass : ctrl.textClass\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.rightClicked($event)\" ng-style=\"labelPosition() === 'right' ? null : ctrl.textStyle\"><div ng-if=\"labelPosition() !== 'right'\">{{text()}}</div><div ng-if=\"labelPosition() === 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div></button></div>"
+  );
+
+}]);
