@@ -96,11 +96,15 @@ var Triarc;
                         if (!child) {
                             child = element.first().children("div").first();
                         }
-                        if (child) {
-                            if (child.height() > element.first().height() && !scope.tlHasScrollContent) {
+                        if (!child)
+                            return;
+                        if (child.height() > element.first().height()) {
+                            if (!scope.tlHasScrollContent) {
                                 scope.tlHasScrollContent = true;
                             }
-                            else if (scope.tlHasScrollContent) {
+                        }
+                        else {
+                            if (scope.tlHasScrollContent) {
                                 scope.tlHasScrollContent = false;
                             }
                         }
