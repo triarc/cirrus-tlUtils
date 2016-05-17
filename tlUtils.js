@@ -91,13 +91,16 @@ var Triarc;
                     tlHasScrollContent: '='
                 },
                 link: function (scope, element, attrs) {
+                    var child;
                     scope.checkHeight = function () {
-                        var child = element.first().children("div").first();
+                        if (!child) {
+                            child = element.first().children("div").first();
+                        }
                         if (child) {
-                            if (child.height() > element.first().height()) {
+                            if (child.height() > element.first().height() && !scope.tlHasScrollContent) {
                                 scope.tlHasScrollContent = true;
                             }
-                            else {
+                            else if (scope.tlHasScrollContent) {
                                 scope.tlHasScrollContent = false;
                             }
                         }
@@ -247,7 +250,7 @@ var Triarc;
             PillButtonController.controllerId = "pillButtonController";
             PillButtonController.$inject = ['$scope'];
             return PillButtonController;
-        })();
+        }());
         Utils.PillButtonController = PillButtonController;
         Utils.mod.controller(PillButtonController.controllerId, PillButtonController);
         Utils.mod.directive("tlPillButton", function () {
