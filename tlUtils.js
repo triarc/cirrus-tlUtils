@@ -283,26 +283,22 @@ var Triarc;
         Utils.mod.directive('fitToContainer', function () {
             function fitToContainer(element) {
                 var containerWidth = element.parent().outerWidth();
-                //if the container is invisible check again in 200 ms
+                //if the container is invisible check again in 500 ms
                 if (containerWidth === 0) {
-                    setTimeout(function () { return fitToContainer(element); }, 200);
+                    setTimeout(function () { return fitToContainer(element); }, 500);
                     return;
                 }
                 var width = element.outerWidth();
-                console.log(width, containerWidth);
                 while (width > containerWidth) {
                     var fontStr = element.css('fontSize');
                     var fontSize = parseInt(fontStr.substr(0, fontStr.length - 2));
-                    console.log(fontSize);
                     element.css({ fontSize: (fontSize - 1) + "px" });
                     width = element.outerWidth();
-                    console.log(width, containerWidth);
                 }
             }
             return {
                 restrict: 'A',
                 link: function (scope, element) {
-                    //fitToContainer(element);
                     scope.$watch('fitToContainer', function () {
                         fitToContainer(element);
                     });
