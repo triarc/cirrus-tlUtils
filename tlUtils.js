@@ -282,8 +282,13 @@ var Triarc;
         });
         Utils.mod.directive('fitToContainer', function () {
             function fitToContainer(element) {
-                var width = element.outerWidth();
                 var containerWidth = element.parent().outerWidth();
+                //if the container is invisible check again in 200 ms
+                if (containerWidth === 0) {
+                    setTimeout(function () { return fitToContainer(element); }, 200);
+                    return;
+                }
+                var width = element.outerWidth();
                 console.log(width, containerWidth);
                 while (width > containerWidth) {
                     var fontStr = element.css('fontSize');
