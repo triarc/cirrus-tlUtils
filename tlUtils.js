@@ -280,6 +280,27 @@ var Triarc;
                 }
             };
         });
+        Utils.mod.directive('fitToContainer', function () {
+            function fitToContainer(element) {
+                var width = element.outerWidth();
+                var containerWidth = element.parent().outerWidth();
+                console.log(width, containerWidth);
+                while (width > containerWidth) {
+                    var fontStr = element.css('fontSize');
+                    var fontSize = parseInt(fontStr.substr(0, fontStr.length - 2));
+                    console.log(fontSize);
+                    element.css({ fontSize: (fontSize - 1) + "px" });
+                    width = element.outerWidth();
+                    console.log(width, containerWidth);
+                }
+            }
+            return {
+                restrict: 'A',
+                link: function (scope, element) {
+                    fitToContainer(element);
+                }
+            };
+        });
     })(Utils = Triarc.Utils || (Triarc.Utils = {}));
 })(Triarc || (Triarc = {}));
 var Triarc;
@@ -387,7 +408,7 @@ angular.module('tlUtils').run(['$templateCache', function($templateCache) {
   'use strict';
 
   $templateCache.put('tlUtils/tlPillButton.html',
-    "<div class=\"btn-group pill-btn\" ng-style=\"{'width': pileFullWidth() ? '100%' : null}\"><button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.textClass : ctrl.labelClass\" ng-style=\"labelPosition() === 'right' ? ctrl.textStyle : null\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.leftClicked($event)\"><div ng-if=\"labelPosition() !== 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div><div ng-if=\"labelPosition() === 'right'\">{{text()}}</div></button> <button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.labelClass : ctrl.textClass\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.rightClicked($event)\" ng-style=\"labelPosition() === 'right' ? null : ctrl.textStyle\"><div ng-if=\"labelPosition() !== 'right'\">{{text()}}</div><div ng-if=\"labelPosition() === 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div></button></div>"
+    "<div class=\"btn-group pill-btn\" ng-style=\"{'width': pileFullWidth() ? '100%' : null}\"><button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.textClass : ctrl.labelClass\" ng-style=\"labelPosition() === 'right' ? ctrl.textStyle : null\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.leftClicked($event)\"><div ng-if=\"labelPosition() !== 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div><div ng-if=\"labelPosition() === 'right'\"><span fit-to-container>{{text()}}</span></div></button> <button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.labelClass : ctrl.textClass\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.rightClicked($event)\" ng-style=\"labelPosition() === 'right' ? null : ctrl.textStyle\"><div ng-if=\"labelPosition() !== 'right'\"><span fit-to-container>{{text()}}</span></div><div ng-if=\"labelPosition() === 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div></button></div>"
   );
 
 }]);
