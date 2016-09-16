@@ -129,7 +129,14 @@ var Triarc;
                 function timeout(callback, timeoutMs) {
                     return new Promise(function (resolve) {
                         setTimeout(function () {
-                            resolve(callback());
+                            if ($rootScope.$$phase) {
+                                resolve(callback());
+                            }
+                            else {
+                                $rootScope.$applyAsync(function () {
+                                    resolve(callback());
+                                });
+                            }
                         }, timeoutMs);
                     });
                 }
