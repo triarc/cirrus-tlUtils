@@ -125,19 +125,29 @@ var Triarc;
     var Utils;
     (function (Utils) {
         Utils.mod.service("tlIntelligentDebouncer", [
-            "$timeout", "tlIntelligentDebouncer.config", function ($timeout, config) {
+            "$rootScope", "tlIntelligentDebouncer.config", function ($rootScope, globalConfig) {
+                function timeout(callback, timeoutMs) {
+                    return new Promise(function (resolve) {
+                        setTimeout(function () {
+                            resolve(callback());
+                        }, timeoutMs);
+                    });
+                }
                 return {
-                    getDebouncer: function (promiseFactory, initialLoad, initialMs, debounceMs) {
-                        if (initialLoad === void 0) { initialLoad = true; }
-                        initialMs = Triarc.hasValue(initialMs) ? initialMs : config.initialDebounce;
-                        debounceMs = Triarc.hasValue(debounceMs) ? debounceMs : config.debounceInterval;
+                    getDebouncer: function (promiseFactory, config) {
+                        if (!config) {
+                            config = {};
+                        }
+                        var initialLoad = Triarc.hasValue(config.initialLoad) ? config.initialLoad : true;
+                        var initialMs = Triarc.hasValue(config.initialMs) ? config.initialMs : globalConfig.initialDebounce;
+                        var debounceMs = Triarc.hasValue(config.debounceMs) ? config.debounceMs : globalConfig.debounceInterval;
                         var promise;
                         var debounceNeeded = false;
                         var check = function () {
                             if (debounceNeeded) {
                                 promise = promise
                                     .then(function () { return promiseFactory(); })
-                                    .then(function () { return $timeout(function () { return check(); }, debounceMs); });
+                                    .then(function () { return timeout(function () { return check(); }, debounceMs); });
                             }
                             else {
                                 promise = undefined;
@@ -147,7 +157,7 @@ var Triarc;
                         var debounce = function () {
                             debounceNeeded = true;
                             if (Triarc.hasNoValue(promise)) {
-                                promise = $timeout(function () { return check(); }, initialMs);
+                                promise = timeout(function () { return check(); }, initialMs);
                             }
                         };
                         if (initialLoad)

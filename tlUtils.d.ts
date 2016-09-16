@@ -16,8 +16,13 @@ declare module Triarc.Utils {
     }
 }
 declare module Triarc.Utils {
+    interface IDebouncerConfig {
+        initialLoad?: boolean;
+        initialMs?: number;
+        debounceMs?: number;
+    }
     interface ITlIntelligentDebouncer {
-        getDebouncer(promiseFactory: () => angular.IPromise<void>, initialLoad?: boolean, initialMs?: number, debounceMs?: number): {
+        getDebouncer(promiseFactory: () => angular.IPromise<void>, config?: IDebouncerConfig): {
             debounce(): void;
         };
     }
