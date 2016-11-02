@@ -125,36 +125,45 @@ var Triarc;
     var Utils;
     (function (Utils) {
         Utils.mod.service("tlIntelligentDebouncer", [
-            "$timeout", "tlIntelligentDebouncer.config", function ($timeout, config) {
+            "$rootScope", "tlIntelligentDebouncer.config", function ($rootScope, globalConfig) {
+                function timeout(callback, timeoutMs) {
+                    return new Promise(function (resolve) {
+                        setTimeout(function () {
+                            resolve(callback());
+                        }, timeoutMs);
+                    });
+                }
                 return {
-                    getDebouncer: function (promiseFactory, initialLoad, initialMs, debounceMs) {
-                        if (initialLoad === void 0) { initialLoad = true; }
-                        initialMs = Triarc.hasValue(initialMs) ? initialMs : config.initialDebounce;
-                        debounceMs = Triarc.hasValue(debounceMs) ? debounceMs : config.debounceInterval;
-                        var promise;
-                        var debounceNeeded = false;
-                        var check = function () {
-                            if (debounceNeeded) {
-                                promise = promise
-                                    .then(function () { return promiseFactory(); })
-                                    .then(function () { return $timeout(function () { return check(); }, debounceMs); });
-                            }
-                            else {
-                                promise = undefined;
-                            }
-                            debounceNeeded = false;
-                        };
-                        var debounce = function () {
-                            debounceNeeded = true;
-                            if (Triarc.hasNoValue(promise)) {
-                                promise = $timeout(function () { return check(); }, initialMs);
-                            }
-                        };
-                        if (initialLoad)
-                            debounce();
-                        return {
-                            debounce: debounce
-                        };
+                    getDebouncer: function (promiseFactory, config) {
+                        if (!config) {
+                            var initialLoad = Triarc.hasValue(config.initialLoad) ? config.initialLoad : true;
+                            var initialMs_1 = Triarc.hasValue(config.initialMs) ? config.initialMs : globalConfig.initialDebounce;
+                            var debounceMs_1 = Triarc.hasValue(config.debounceMs) ? config.debounceMs : globalConfig.debounceInterval;
+                            var promise_1;
+                            var debounceNeeded_1 = false;
+                            var check_1 = function () {
+                                if (debounceNeeded_1) {
+                                    promise_1 = promise_1
+                                        .then(function () { return promiseFactory(); })
+                                        .then(function () { return timeout(function () { return check_1(); }, debounceMs_1); });
+                                }
+                                else {
+                                    promise_1 = undefined;
+                                }
+                                debounceNeeded_1 = false;
+                            };
+                            var debounce = function () {
+                                debounceNeeded_1 = true;
+                                if (Triarc.hasNoValue(promise_1)) {
+                                    promise_1 = timeout(function () { return check_1(); }, initialMs_1);
+                                }
+                            };
+                            if (initialLoad)
+                                debounce();
+                            return {
+                                debounce: debounce
+                            };
+                        }
                     }
                 };
             }
