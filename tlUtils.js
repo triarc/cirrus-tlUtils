@@ -125,36 +125,19 @@ var Triarc;
     var Utils;
     (function (Utils) {
         Utils.mod.service("tlIntelligentDebouncer", [
-            "$rootScope", "tlIntelligentDebouncer.config", function ($rootScope, globalConfig) {
-                function timeout(callback, timeoutMs) {
-                    return new Promise(function (resolve) {
-                        setTimeout(function () {
-                            if ($rootScope.$$phase) {
-                                resolve(callback());
-                            }
-                            else {
-                                $rootScope.$applyAsync(function () {
-                                    resolve(callback());
-                                });
-                            }
-                        }, timeoutMs);
-                    });
-                }
+            "$timeout", "tlIntelligentDebouncer.config", function ($timeout, config) {
                 return {
-                    getDebouncer: function (promiseFactory, config) {
-                        if (!config) {
-                            config = {};
-                        }
-                        var initialLoad = Triarc.hasValue(config.initialLoad) ? config.initialLoad : true;
-                        var initialMs = Triarc.hasValue(config.initialMs) ? config.initialMs : globalConfig.initialDebounce;
-                        var debounceMs = Triarc.hasValue(config.debounceMs) ? config.debounceMs : globalConfig.debounceInterval;
+                    getDebouncer: function (promiseFactory, initialLoad, initialMs, debounceMs) {
+                        if (initialLoad === void 0) { initialLoad = true; }
+                        initialMs = Triarc.hasValue(initialMs) ? initialMs : config.initialDebounce;
+                        debounceMs = Triarc.hasValue(debounceMs) ? debounceMs : config.debounceInterval;
                         var promise;
                         var debounceNeeded = false;
                         var check = function () {
                             if (debounceNeeded) {
                                 promise = promise
                                     .then(function () { return promiseFactory(); })
-                                    .then(function () { return timeout(function () { return check(); }, debounceMs); });
+                                    .then(function () { return $timeout(function () { return check(); }, debounceMs); });
                             }
                             else {
                                 promise = undefined;
@@ -164,7 +147,7 @@ var Triarc;
                         var debounce = function () {
                             debounceNeeded = true;
                             if (Triarc.hasNoValue(promise)) {
-                                promise = timeout(function () { return check(); }, initialMs);
+                                promise = $timeout(function () { return check(); }, initialMs);
                             }
                         };
                         if (initialLoad)
@@ -179,151 +162,6 @@ var Triarc;
         Utils.mod.constant("tlIntelligentDebouncer.config", {
             initialDebounce: 1000,
             debounceInterval: 15000
-        });
-    })(Utils = Triarc.Utils || (Triarc.Utils = {}));
-})(Triarc || (Triarc = {}));
-var Triarc;
-(function (Triarc) {
-    var Utils;
-    (function (Utils) {
-        var PillButtonController = (function () {
-            function PillButtonController($scope) {
-                var _this = this;
-                this.$scope = $scope;
-                this.$scope.$watch("pileDisabled()", function (value) {
-                    _this.$labelClass = null;
-                    _this.$textClass = null;
-                });
-            }
-            PillButtonController.prototype.leftClicked = function ($event) {
-                if (this.$scope.labelPosition() === 'right') {
-                    this.$scope.textClick({ $event: $event });
-                }
-                if (this.$scope.labelPosition() !== 'right') {
-                    this.$scope.labelClick({ $event: $event });
-                }
-                this.$scope.pileClick({ $event: $event });
-            };
-            PillButtonController.prototype.rightClicked = function ($event) {
-                if (this.$scope.labelPosition() !== 'right') {
-                    this.$scope.textClick({ $event: $event });
-                }
-                if (this.$scope.labelPosition() === 'right') {
-                    this.$scope.labelClick({ $event: $event });
-                }
-                this.$scope.pileClick({ $event: $event });
-            };
-            Object.defineProperty(PillButtonController.prototype, "labelClass", {
-                get: function () {
-                    if (!this.$labelClass) {
-                        this.$labelClass = 'btn-default';
-                        if (this.$scope.labelClass()) {
-                            this.$labelClass = this.$scope.labelClass();
-                        }
-                        if (this.$scope.pileClass()) {
-                            this.$labelClass = this.$scope.pileClass();
-                        }
-                        if (this.$scope.pileDisabled()) {
-                            this.$labelClass = 'btn-white';
-                        }
-                    }
-                    return this.$labelClass;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Object.defineProperty(PillButtonController.prototype, "textClass", {
-                get: function () {
-                    if (!this.$textClass) {
-                        this.$textClass = 'btn-default';
-                        if (this.$scope.textClass()) {
-                            this.$textClass = this.$scope.textClass();
-                        }
-                        if (this.$scope.pileClass()) {
-                            this.$textClass = this.$scope.pileClass();
-                        }
-                        if (this.$scope.pileDisabled()) {
-                            this.$textClass = 'btn-white';
-                        }
-                    }
-                    return this.$textClass;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            Object.defineProperty(PillButtonController.prototype, "textStyle", {
-                get: function () {
-                    if (this.$scope.pileFullWidth()) {
-                        return {
-                            'width': 'calc(100% - 45px)'
-                        };
-                    }
-                    if (this.$scope.textWidth()) {
-                        return {
-                            'width': this.$scope.textWidth()
-                        };
-                    }
-                    return null;
-                },
-                enumerable: true,
-                configurable: true
-            });
-            PillButtonController.controllerId = "pillButtonController";
-            PillButtonController.$inject = ['$scope'];
-            return PillButtonController;
-        }());
-        Utils.PillButtonController = PillButtonController;
-        Utils.mod.controller(PillButtonController.controllerId, PillButtonController);
-        Utils.mod.directive("tlPillButton", function () {
-            return {
-                restrict: "E",
-                controller: PillButtonController.controllerId,
-                controllerAs: "ctrl",
-                templateUrl: "tlUtils/tlPillButton.html",
-                scope: {
-                    label: "&",
-                    labelIcon: "&",
-                    labelPosition: "&",
-                    labelClick: "&",
-                    labelClass: "&",
-                    text: "&",
-                    textClass: "&",
-                    textClick: "&",
-                    textWidth: "&",
-                    pileDisabled: "&",
-                    pileClick: "&",
-                    pileClass: "&",
-                    pileFullWidth: "&"
-                }
-            };
-        });
-        Utils.mod.directive('fitToContainer', function () {
-            function fitToContainer(element) {
-                var containerWidth = element.parent().outerWidth();
-                //if the container is invisible check again in 500 ms
-                if (containerWidth === 0) {
-                    setTimeout(function () { return fitToContainer(element); }, 500);
-                    return;
-                }
-                var width = element.outerWidth();
-                while (width > containerWidth) {
-                    var fontStr = element.css('fontSize');
-                    var fontSize = parseInt(fontStr.substr(0, fontStr.length - 2));
-                    element.css({ fontSize: (fontSize - 1) + "px" });
-                    width = element.outerWidth();
-                }
-            }
-            return {
-                restrict: 'A',
-                link: function (scope, element) {
-                    scope.$watch('fitToContainer', function () {
-                        fitToContainer(element);
-                    });
-                },
-                scope: {
-                    fitToContainer: '='
-                }
-            };
         });
     })(Utils = Triarc.Utils || (Triarc.Utils = {}));
 })(Triarc || (Triarc = {}));
@@ -428,11 +266,3 @@ var Triarc;
     })(Utils = Triarc.Utils || (Triarc.Utils = {}));
 })(Triarc || (Triarc = {}));
 
-angular.module('tlUtils').run(['$templateCache', function($templateCache) {
-  'use strict';
-
-  $templateCache.put('tlUtils/tlPillButton.html',
-    "<div class=\"btn-group pill-btn\" ng-style=\"{'width': pileFullWidth() ? '100%' : null}\"><button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.textClass : ctrl.labelClass\" ng-style=\"labelPosition() === 'right' ? ctrl.textStyle : null\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.leftClicked($event)\"><div ng-if=\"labelPosition() !== 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div><div ng-if=\"labelPosition() === 'right'\"><span fit-to-container=\"text()\">{{text()}}</span></div></button> <button class=\"btn\" ng-class=\"labelPosition() === 'right' ? ctrl.labelClass : ctrl.textClass\" ng-disabled=\"pileDisabled()\" ng-click=\"ctrl.rightClicked($event)\" ng-style=\"labelPosition() === 'right' ? null : ctrl.textStyle\"><div ng-if=\"labelPosition() !== 'right'\"><span fit-to-container=\"text()\">{{text()}}</span></div><div ng-if=\"labelPosition() === 'right'\"><span class=\"glyphicon\" ng-if=\"labelIcon()\" ng-class=\"labelIcon()\"></span> {{label()}}</div></button></div>"
-  );
-
-}]);
