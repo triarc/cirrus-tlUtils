@@ -126,42 +126,51 @@ var Triarc;
     (function (Utils) {
         Utils.mod.service("tlIntelligentDebouncer", [
             "$rootScope", "tlIntelligentDebouncer.config", function ($rootScope, globalConfig) {
-                function timeout(callback, timeoutMs) {
-                    return new Promise(function (resolve) {
-                        setTimeout(function () {
+                function lightTimeout(callback, timeoutMs) {
+                    var timeoutNumber = null;
+                    var prom = new Promise(function (resolve) {
+                        timeoutNumber = setTimeout(function () {
                             resolve(callback());
                         }, timeoutMs);
                     });
+                    prom.cancel = function () {
+                        clearTimeout(timeoutNumber);
+                    };
+                    return prom;
                 }
                 return {
-                    getDebouncer: function (promiseFactory, config) {
+                    getDebouncer: function (func, config) {
                         if (!config) {
                             config = {};
                         }
-                        var initialLoad = Triarc.hasValue(config.initialLoad) ? config.initialLoad : true;
+                        var immediate = Triarc.hasValue(config.initialLoad) ? config.initialLoad : true;
                         var initialMs = Triarc.hasValue(config.initialMs) ? config.initialMs : globalConfig.initialDebounce;
                         var debounceMs = Triarc.hasValue(config.debounceMs) ? config.debounceMs : globalConfig.debounceInterval;
-                        var promise;
-                        var debounceNeeded = false;
-                        var check = function () {
-                            if (debounceNeeded) {
-                                promise = promise
-                                    .then(function () { return promiseFactory(); })
-                                    .then(function () { return timeout(function () { return check(); }, debounceMs); });
+                        var safeCall = function () {
+                            if (!$rootScope.$$phase) {
+                                $rootScope.$apply(function () { return safeCall(); });
                             }
                             else {
-                                promise = undefined;
+                                func();
                             }
-                            debounceNeeded = false;
                         };
+                        var timeout;
                         var debounce = function () {
-                            debounceNeeded = true;
-                            if (Triarc.hasNoValue(promise)) {
-                                promise = timeout(function () { return check(); }, initialMs);
+                            var later = function () {
+                                var timeout = null;
+                                if (!immediate) {
+                                    safeCall();
+                                }
+                            };
+                            var callNow = immediate && !timeout;
+                            if (timeout) {
+                                timeout.cancel();
+                            }
+                            timeout = lightTimeout(later, debounceMs);
+                            if (callNow) {
+                                lightTimeout(function () { return safeCall(); }, initialMs);
                             }
                         };
-                        if (initialLoad)
-                            debounce();
                         return {
                             debounce: debounce
                         };
