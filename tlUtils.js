@@ -158,19 +158,16 @@ var Triarc;
                         var debounce = function () {
                             var later = function () {
                                 var timeout = null;
-                                if (!immediate) {
-                                    safeCall();
-                                }
+                                safeCall();
                             };
-                            var callNow = immediate && !timeout;
                             if (timeout) {
                                 timeout.cancel();
                             }
                             timeout = lightTimeout(later, debounceMs);
-                            if (callNow) {
-                                lightTimeout(function () { return safeCall(); }, initialMs);
-                            }
                         };
+                        if (immediate) {
+                            lightTimeout(function () { return safeCall(); }, initialMs);
+                        }
                         return {
                             debounce: debounce
                         };

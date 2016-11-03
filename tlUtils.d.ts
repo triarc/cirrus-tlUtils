@@ -22,7 +22,7 @@ declare module Triarc.Utils {
         debounceMs?: number;
     }
     interface ITlIntelligentDebouncer {
-        getDebouncer(promiseFactory: () => angular.IPromise<void>, config?: IDebouncerConfig): {
+        getDebouncer(promiseFactory: Function, config?: IDebouncerConfig): {
             debounce(): void;
         };
     }
